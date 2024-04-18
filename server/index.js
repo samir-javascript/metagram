@@ -43,7 +43,7 @@ app.use('/api/users',usersRoutes)
 app.use('/api/chat', conversationRoutes)
 app.use(notFound)
 app.use(errorHandler)
-if (process.env.NODE_ENV !== 'development') {
+if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '/client/dist')));
   app.get('*', (req, res) =>
   res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'))
