@@ -7,10 +7,7 @@ export default defineConfig({
    
  build: {
   manifest: true,
-  rollupOptions: {
-    // overwrite default .html entry
-    input: '/main.jsx'
-  },
+ 
   
   outDir: "dist",
   
