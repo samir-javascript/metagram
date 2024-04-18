@@ -15,7 +15,7 @@ export const SocketContextProvider = ({children})=> {
     const [onlineUsers,setOnlineUsers] = useState([])
     useEffect(()=> {
         if(userInfo) {
-              const socket = io("http://localhost:5173", {
+              const socket = io("https://metagram.onrender.com", {
                 query: {
                     userId: userInfo?._id
                 }
