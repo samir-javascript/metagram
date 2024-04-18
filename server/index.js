@@ -32,31 +32,27 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 
 
 // Define a route
-if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, '/client/dist')));
-    app.get('*', (req, res) =>
-    res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'))
-  );
 
-  } else {
-    app.get('/', (req, res) => {
-        res.send('Hello, World!');
-    });
-  }
 
+
+
+   
+ 
 app.use("/api/posts",postsRoutes)
 app.use('/api/users',usersRoutes)
 app.use('/api/chat', conversationRoutes)
 app.use(notFound)
 app.use(errorHandler)
-// Start the server
+if (process.env.NODE_ENV !== 'development') {
+  app.use(express.static(path.join(__dirname, '/client/dist')));
+  app.get('*', (req, res) =>
+  res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'))
+);
+} 
 
-// app.use(express.static(path.join(__dirname, "/client/dist")));
-
-// app.get("*", (req, res) => {
-// 	res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
-// });
-// Use the port defined in the environment variables or default to 3000
+app.get('/', (req, res) => {
+  res.send('Hello, World!');
+});
 server.listen(PORT, () => {
   connectToDb()
     console.log(`Server is running on port ${PORT}`);

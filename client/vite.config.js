@@ -5,6 +5,7 @@ import { defineConfig } from "vite"
 //console.log(import.meta.VITE_BACKEND_URL, "jj")
 export default defineConfig({
    
+   
  build: {
   manifest: true,
  
@@ -12,6 +13,7 @@ export default defineConfig({
   outDir: "dist",
   
  },
+ 
   plugins: [react()],
   resolve: {
     alias: {
@@ -20,7 +22,7 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/api': "http://localhost:5000",
-    },
-  },
+      '/api': "http://localhost:5000"
+    }
+  }
 })
