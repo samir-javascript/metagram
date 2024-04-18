@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 8000;
 // Creating an instance of Express
 dotenv.config()
 
-const __dirname = path.resolve()
+
 // Middleware setup
 app.use(cors({
   credentials: true,
@@ -31,28 +31,25 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 }));
 
 
-// Define a route
-
-
-
-
-   
- 
 app.use("/api/posts",postsRoutes)
 app.use('/api/users',usersRoutes)
 app.use('/api/chat', conversationRoutes)
-app.use(notFound)
-app.use(errorHandler)
+
+const __dirname = path.resolve()
+
+
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '/client/dist')));
   app.get('*', (req, res) =>
   res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'))
 );
-} 
-
-app.get('/', (req, res) => {
-  res.send('Hello, World!');
-});
+} else {
+  app.get('/', (req, res) => {
+    res.send('Api running....');
+  })
+}
+app.use(notFound)
+app.use(errorHandler)
 server.listen(PORT, () => {
   connectToDb()
     console.log(`Server is running on port ${PORT}`);
