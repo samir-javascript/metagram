@@ -11,7 +11,7 @@ import postsRoutes from './routes/postsRoutes.js'
 import conversationRoutes from "./routes/chatRoutes.js"
 import { app, server } from "./socket/server.js"
 import { errorHandler, notFound } from './middlewares/errorMiddleWare.js'
-
+const PORT = process.env.PORT || 8000;
 // Creating an instance of Express
 dotenv.config()
 
@@ -19,6 +19,8 @@ const __dirname = path.resolve()
 // Middleware setup
 app.use(cors({
   credentials: true,
+  optionSuccessStatus: 200,
+  methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"],
   origin: "*"
 }));
 app.use(cookieParser());
@@ -48,7 +50,7 @@ app.use('/api/chat', conversationRoutes)
 app.use(notFound)
 app.use(errorHandler)
 // Start the server
-const PORT = process.env.PORT || 8000;
+
 // app.use(express.static(path.join(__dirname, "/client/dist")));
 
 // app.get("*", (req, res) => {

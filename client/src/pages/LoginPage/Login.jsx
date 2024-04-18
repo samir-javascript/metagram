@@ -50,6 +50,7 @@ const Login = () => {
             })
         }else {
           dispatch(setCredentials({...res?.data}))
+          console.log(res, "res")
           navigate("/")
         }
          

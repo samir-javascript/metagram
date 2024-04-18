@@ -1,6 +1,8 @@
+
 import { logoutUser } from "./usersSlice";
 import { fetchBaseQuery, createApi } from "@reduxjs/toolkit/query/react"
-const baseQuery = fetchBaseQuery({baseUrl: ""});
+const baseQuery = fetchBaseQuery({baseUrl: "http://localhost:5000"});
+
 async function baseQueryWithAuth(args, api, extra) {
     const result = await baseQuery(args, api, extra);
     // Dispatch the logout action on 401.
