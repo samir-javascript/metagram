@@ -61,6 +61,7 @@ const registerUser = asyncHandler ( async(req,res)=> {
             res.status(200).json({
                 _id: user._id,
                 name: user.name,
+                verified: user.verified,
                 gender: user.gender,
                 username: user.username,
                 email: user.email,
@@ -106,7 +107,7 @@ const registerUser = asyncHandler ( async(req,res)=> {
              const { token, user} = req.body;
              if(!isValidObjectId(user))  {
                 res.status(401)
-                throw new Error('Invalid email ID')
+                throw new Error('Invalid user ID')
              }
            
             const tk = await EmailVerificationToken.findOne({
@@ -121,7 +122,17 @@ const registerUser = asyncHandler ( async(req,res)=> {
                 verified: true
              })
              await EmailVerificationToken.findByIdAndDelete(tk._id)
-             res.status(200).json({mesage: "your email has been verified"})
+             res.status(200).json({
+                _id: user._id,
+                name: user.name,
+                verified: user.verified,
+                gender: user.gender,
+                username: user.username,
+                email: user.email,
+                message: "your account has been verified",
+                liked: user.liked,
+                saved: user.saved
+             })
          } catch (error) {
             console.log(error)
             res.status(500)

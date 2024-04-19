@@ -2,13 +2,15 @@
 import { Link, useLocation} from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { useVerifyEmailMutation } from '@/slices/UsersApiSlice'
-
+import { useDispatch} from 'react-redux'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
+import { setCredentials } from '@/slices/usersSlice'
 const VerifyToken = () => {
     const { search } = useLocation()
     const [error,setError] = useState('')
     const searchParams = new URLSearchParams(search)
+    const dispatch = useDispatch()
     const [Verify, {isLoading}] = useVerifyEmailMutation()
     const user = searchParams.get('user')
     const token = searchParams.get('token')
@@ -22,11 +24,11 @@ const VerifyToken = () => {
              setError(res.error.data.message)
              return;
            }
-
-
+        
+          dispatch(setCredentials({...res.data}))
         }
         verifyAccount()
-    },[token,user,Verify])
+    },[token,user,dispatch,Verify])
 
     if(isLoading) {
       return <p className='text-gray-500 py-20 font-semibold text-2xl capitalize animate-pulse leading-[140%] opacity-[0.9] '>  Please wait while we are verifying your account...</p>
