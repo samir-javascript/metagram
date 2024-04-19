@@ -14,6 +14,14 @@ export const usersSlice = ApiSlice.injectEndpoints({
               body: data
           })
        }),
+       verifyEmail:  builder.mutation({
+          query: (data)=> ({
+             url: `${USERS_URL}/verify-token`,
+             method: "POST",
+             body: data
+          })
+       }),
+       // /verify-token
        getUsers: builder.query({
         query: ()=> ({
             url: `${USERS_URL}`,
@@ -86,7 +94,31 @@ export const usersSlice = ApiSlice.injectEndpoints({
             method: "POST",
             body: {...data}
         })
-     })
+     }),
+     resetPasswordRequest: builder.mutation({
+        query: (data)=> ({
+            url: `${USERS_URL}/reset-password_request`,
+            method: "POST",
+            body: {...data}
+        })
+     }),
+     verifyPasswordToken: builder.mutation({
+        query: (data)=> ({
+            url: `${USERS_URL}/verify-password_token`,
+            method: "POST",
+            body: {...data}
+        })
+     }),
+     updateUserPassword: builder.mutation({
+        query: (data)=> ({
+            url: `${USERS_URL}/update-user-password`,
+            method: "PUT",
+            body: {...data}
+        })
+     }),
+     // /update-user-password
+
+     // 
     })
 })
-export const { useAuthUserMutation, useGetAllUsersQuery, useGetUserProfileFollowersQuery, useUserPostsQuery, useGetSavedPostsQuery, useUpdateProfileMutation, useToggleFollowMutation, useGetUserQuery, useGetCurrentUserQuery, useRegisterUserMutation , useGetUsersQuery, useLogOutMutation} = usersSlice
+export const { useAuthUserMutation, useUpdateUserPasswordMutation, useVerifyEmailMutation, useVerifyPasswordTokenMutation, useResetPasswordRequestMutation,  useGetAllUsersQuery, useGetUserProfileFollowersQuery, useUserPostsQuery, useGetSavedPostsQuery, useUpdateProfileMutation, useToggleFollowMutation, useGetUserQuery, useGetCurrentUserQuery, useRegisterUserMutation , useGetUsersQuery, useLogOutMutation} = usersSlice

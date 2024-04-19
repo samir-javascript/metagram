@@ -202,7 +202,7 @@ button svg {
     brightness(104%) contrast(106%) !important;
 }
 .leftsidebar {
-  @apply hidden !sticky  !top-0  md:flex px-6 py-10 flex-col  justify-between lg:min-w-[270px] dark:bg-black bg-white border-r dark:border-[#333] border-[#DBDBDB];
+  @apply hidden h-full sticky top-0  md:flex px-6 py-10 flex-col  justify-between lg:min-w-[270px] dark:bg-black bg-white border-r dark:border-[#333] border-[#DBDBDB];
 }
 .leftsidebar-link {
   @apply rounded-lg base-medium hover:bg-secondary-100 hover:dark:bg-[#151821] transition;

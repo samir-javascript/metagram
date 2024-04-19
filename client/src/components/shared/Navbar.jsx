@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom"
+import { Link } from "react-router-dom"
 import logo from "../../assets/logo.png"
 import profile from '../../assets/profile.png'
 import SearchBar from "../search/SearchBar"
@@ -19,14 +19,14 @@ import { logoutUser } from "../../slices/usersSlice"
 
 
 const Navbar = () => {
-  const {pathname} = useLocation()
+ // const {pathname} = useLocation()
   const {userInfo} = useSelector((state)=> state.auth)
   
   const [logOut, {isLoading}] = useLogOutMutation()
   const dispatch = useDispatch()
 
 
-  if(pathname === "/sign-in" || pathname === "/register" || pathname.startsWith('/direct')) return null
+  //if(pathname === "/sign-in" || pathname === "/register" || pathname.startsWith('/direct')) return null
 
   const handleLogout = async()=> {
     try {

@@ -3,7 +3,7 @@ import { useSelector } from "react-redux"
 const RoutesProtected = () => {
     const {userInfo} = useSelector(state => state.auth)
   return (
-     userInfo ? <Outlet /> : <Navigate to="/sign-in" replace={true} />
+     userInfo  && userInfo.verified ? <Outlet /> : <Navigate to="/sign-in" replace={true} />
     
   )
 }

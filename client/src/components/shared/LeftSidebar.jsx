@@ -17,7 +17,7 @@ const LeftSidebar = () => {
   const dispatch = useDispatch()
   const {userInfo} = useSelector((state)=> state.auth)
  
-  if(pathname === "/sign-in" || pathname === "/register" || pathname.startsWith("/direct")) return null
+  //if(pathname === "/sign-in" || pathname === "/register" || pathname.startsWith("/direct")) return null
 
   const sidebarLinks = [
     {

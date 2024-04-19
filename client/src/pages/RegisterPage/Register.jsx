@@ -1,5 +1,8 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/no-unescaped-entities */
 
 import logo from '../../assets/anylogo.png'
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
 import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
@@ -16,8 +19,11 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Link, useNavigate } from 'react-router-dom'
 import { setCredentials } from '../../slices/usersSlice'
 import { UserFormValidation } from '@/validation'
+import { useState } from 'react'
 const Register = () => {
   const dispatch = useDispatch()
+  const [error,setError] = useState("")
+  const [message,setMessage] = useState("")
   const { toast } = useToast()
   const navigate = useNavigate()
   const [RegisterUser, {isLoading}] = useRegisterUserMutation()
@@ -46,13 +52,15 @@ const Register = () => {
           
        })
        if(res.error) {
-          toast({
-            title:res?.error?.data?.message,
-            variant: "destructive"
-          }) 
+          // toast({
+          //   title:res?.error?.data?.message,
+          //   variant: "destructive"
+          // }) 
+          setError(res.error.data.message)
+          return;
        }else {
         dispatch(setCredentials({...res?.data}))
-        navigate("/")
+        setMessage(res.data.message)
        }
        
     } catch (error) {
@@ -62,11 +70,32 @@ const Register = () => {
   }
 
   return (
-    <div className="min-h-screen w-full bg-secondary-800 flex items-center justify-center">
+    <div className="min-h-screen w-full bg-secondary-800 
+    flex flex-col items-center justify-center">
+      {error && (
+        <Alert className='!bg-red-500 text-white' variant="destructive">
+  
+  <AlertTitle>Ooops!</AlertTitle>
+  <AlertDescription>
+      {error}
+  </AlertDescription>
+</Alert>
+      )}
+      {message && (
+        <Alert className="!bg-green-400 max-w-[600px] my-10 mx-auto text-center " variant="destructive">
+  
+  <AlertTitle>you're almost done</AlertTitle>
+  <AlertDescription className="capitalize">
+      {message}.
+  </AlertDescription>
+</Alert>
+      )}
+
+
          <div className="sm:w-[600px] w-[320px] my-8 px-7 py-3 gap-6 h-auto bg-white flex flex-col rounded-[15px] ">
-         <Link to="/">
+       
               <img className="w-[60px] h-[70px] object-contain " src={logo} alt="appGram" />
-              </Link>
+             
               <div className="flex flex-col gap-2">
                    <p className="font-semibold text-[20px] text-black leading-[140%] ">Register</p>
                    <p className="text-gray-400 font-normal text-bases ">to continue to appGram</p>

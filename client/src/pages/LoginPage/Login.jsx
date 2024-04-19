@@ -66,9 +66,9 @@ const Login = () => {
     <div className="min-h-screen w-full bg-secondary-800 flex items-center justify-center">
          <div className="sm:w-[600px] w-[320px] my-8 px-7 py-3 gap-6 h-auto
           bg-white flex flex-col rounded-[15px] ">
-            <Link to="/">
+            
               <img className="w-[60px] h-[70px] object-contain " src={logo} alt="appGram" />
-              </Link>
+             
             
               <div className="flex flex-col gap-2">
                    <p className="font-semibold text-[20px] text-black leading-[140%] ">Sign in</p>
@@ -130,9 +130,15 @@ const Login = () => {
 
       </form>
     </Form>
+    <div className='flex items-center flex-row justify-between max-sm:flex-col  '>
     <div className='flex items-center '>
          <p className='font-semibold text-[#454545] sm:text-[16px] text-[13px] leading-[1.7] '>Don't have an Account ?</p> <Link className='ml-1 text-secondary-200 underline whitespace-nowrap' to="/register"> sign up</Link>
     </div>
+    <div>
+         <Link to="/reset_mypassword" className='font-semibold text-secondary-200 capitalize underline whitespace-nowrap sm:text-[16px] text-[13px] leading-[1.7] '>forgot password</Link>
+    </div>
+    </div>
+  
          </div>
     </div>
   )

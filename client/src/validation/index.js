@@ -26,6 +26,18 @@ export const PostValidation = z.object({
     password: z
       .string().min(3,{message:"Please make sure to fill out this feild"})
   });
+  const passwordSchema = z
+  .string()
+  .min(8, { message: "Password must be at least 8 characters long." })
+  .max(50, { message: "Password cannot exceed 50 characters." })
+  .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/, {
+    message: "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
+  });
+
+export const ResetPasswordValidation = z.object({
+  password: passwordSchema,
+  confirmPassword: z.string()
+});
   export const UserValidation = z.object({
    
     email: z.string().email({ message: "Invalid email format" }),
@@ -37,4 +49,9 @@ export const PostValidation = z.object({
       location: z.string().nullish()
    });
   
+   export const ForgetPasswordValidation = z.object({
+   
+    email: z.string().email({ message: "Invalid email format" }),
+    
+   });
   

@@ -2,9 +2,12 @@ import { isValidObjectId } from "mongoose";
 import Post from "../models/postModel.js";
 import cloudinary from '../utils/cloudinary.js'
 import User from "../models/userModel.js"
-
+import crypto from 'crypto'
 import generateToken from "../utils/generateToken.js";
 import asyncHandler from "../middlewares/asyncHandler.js";
+import { sendEmailForResetPassword, sendEmailForResetSeccuss, sendMail } from "../utils/emailTransporter.js";
+import EmailVerificationToken from "../models/EmailVerificationToken.js";
+import PasswordVerificationToken from "../models/PasswordTokenModel.js";
 
 const authUser = asyncHandler ( async(req,res)=>  {
     const { password,email} = req.body;
@@ -17,9 +20,12 @@ const authUser = asyncHandler ( async(req,res)=>  {
                 name: user.name,
                 username: user.username,
                 email: user.email,
+                picture: user.picture,
                 genre: user.genre,
                 liked: user.liked,
-                saved: user.saved
+                saved: user.saved,
+                verified: user.verified,
+                message: "you have successfuly reset your password"
 
             })
         }else  {
@@ -45,15 +51,22 @@ const registerUser = asyncHandler ( async(req,res)=> {
         })
         if(user) {
             generateToken(user._id,res)
+            await EmailVerificationToken.findOneAndDelete({user: user._id})
+            let token = await EmailVerificationToken.create({
+                 user: user._id,
+                 token: crypto.randomBytes(32).toString("hex")
+            })
+            const text =  `http://localhost:5173/resetPassword?user=${user._id}&token=${token.token}`
+           await  sendMail(email, "Email verification", text)
             res.status(200).json({
                 _id: user._id,
                 name: user.name,
                 gender: user.gender,
                 username: user.username,
                 email: user.email,
-                
+                message: "please check out your inbox to verify your email account",
                 liked: user.liked,
-            saved: user.saved
+                saved: user.saved
             })
         }else {
            res.status(401)
@@ -65,6 +78,129 @@ const registerUser = asyncHandler ( async(req,res)=> {
      
       
     )
+   const verifyPasswordToken = asyncHandler(async(req,res)=> {
+      try {
+        const { user, token } = req.body;
+        if(!token) {
+            throw new Error('Invalid token')
+        }
+        if(!isValidObjectId(user)) {
+            res.status(401)
+            throw new Error('Invalid user ID')
+        }
+        const tk = await PasswordVerificationToken.findOne({user})
+        if(!tk) {
+            res.status(404)
+            throw new Error('Token not found')
+        }
+      
+        res.status(200).json({message: "you're legit to reset your password account"})
+      } catch (error) {
+        console.log(error)
+        res.status(500)
+        throw new Error('Internal server error',error)
+      }
+   })
+    const verifyToken = asyncHandler(async(req,res)=> {
+         try {
+             const { token, user} = req.body;
+             if(!isValidObjectId(user))  {
+                res.status(401)
+                throw new Error('Invalid email ID')
+             }
+           
+            const tk = await EmailVerificationToken.findOne({
+                user,
+                token
+             })
+             if(!tk) {
+                res.status(401)
+                throw new Error('Not authorized, no token')
+             }
+             await User.findByIdAndUpdate(user, {
+                verified: true
+             })
+             await EmailVerificationToken.findByIdAndDelete(tk._id)
+             res.status(200).json({mesage: "your email has been verified"})
+         } catch (error) {
+            console.log(error)
+            res.status(500)
+            throw new Error('Internal server error')
+         }
+    })
+ const updateUserPassword = async(req,res)=> {
+     try {
+        const { user:userId, token , password } = req.body;
+        if(!token) {
+            throw new Error('Invalid token')
+        }
+        if(!password) {
+            throw new Error('password is required')
+        }
+        if(!isValidObjectId(userId)) {
+            res.status(400)
+            throw new Error('Invalid USER ID')
+        }
+        const user = await User.findById(userId)
+        if(!user) {
+            res.status(404)
+            throw new Error('User not found')
+        }
+        const tk = await PasswordVerificationToken.findOne({user:userId})
+        if(!tk) {
+            res.status(404)
+            throw new Error('password token not found')
+        }
+        user.password = password;
+        await user.save()
+        await PasswordVerificationToken.findByIdAndDelete(tk._id)
+        await sendEmailForResetSeccuss(user.email,"Password reset success", "you have reset your password successfuly")
+        res.status(200).json({
+            _id: user._id,
+            name: user.name,
+            username: user.username,
+            email: user.email,
+            picture: user.picture,
+            genre: user.genre,
+            liked: user.liked,
+            saved: user.saved,
+            verified: user.verified,
+            message: "you have successfuly reset your password"
+        })
+     } catch (error) {
+        console.log(error)
+        res.status(500)
+        throw new Error('Internal server error',error)
+     }
+ }
+   const resetPasswordRequest = asyncHandler(async(req,res)=> {
+     try {
+         const { email } = req.body;
+         const user = await User.findOne({email})
+         if(!user) {
+             res.status(404)
+             throw new Error('User not found')
+         }
+         // delete any previous tokens;
+         await PasswordVerificationToken.findOneAndDelete({user: user._id})
+         let token = await PasswordVerificationToken.create({
+             user: user._id,
+             token: crypto.randomBytes(32).toString("hex")
+         })
+         if(!token) {
+            throw new Error('Failed to create token')
+         }
+         const text = `http://localhost:5173/reset-password_appgram?user=${user._id}&token=${token.token}`
+         await sendEmailForResetPassword(email,'Reset password',text)
+         res.status(200).json({message: "Please check out your inbox to reset your password"})
+     } catch (error) {
+         console.log(error)
+         res.status(500)
+         throw new Error('Internal server error')
+     }
+   })
+
+
 const logoutUser = asyncHandler (async(req,res)=> {
    
         res.clearCookie("appGramJWT");
@@ -169,7 +305,6 @@ const toggleFollow = asyncHandler( async(req,res)=> {
      throw new Error('Internal server error')
    }
 })
-
 const updateProfile = asyncHandler (async(req,res)=> {
     try {
         const { name, username, picture, email, bio, location} = req.body;
@@ -200,7 +335,6 @@ const updateProfile = asyncHandler (async(req,res)=> {
         throw new Error('Internal server error')
     }
 })
-
 const getSavedPosts  = asyncHandler (async(req,res)=> {
      try {
         const user = await User.findById(req.user._id)
@@ -226,7 +360,6 @@ const getSavedPosts  = asyncHandler (async(req,res)=> {
         throw new Error('Internal server error')
      }
 })
-
 const getAllUsersForConvesation = asyncHandler( async(req,res)=>  {
      try {
         const users = await User.find({
@@ -253,6 +386,10 @@ export {
     registerUser,
     getAllUsers,
     toggleFollow,
+    verifyPasswordToken,
     updateProfile,
-    getSavedPosts
+    getSavedPosts,
+    verifyToken,
+    resetPasswordRequest,
+    updateUserPassword
 }

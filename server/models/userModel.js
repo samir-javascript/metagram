@@ -43,6 +43,10 @@ const UserSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "User",
     }],
+    verified: {
+        type: Boolean,
+        default: false,
+    },
     saved: [{type: Schema.Types.ObjectId , ref: 'Post'}],
     liked: [{type: Schema.Types.ObjectId , ref: 'Post'}],
 }, {

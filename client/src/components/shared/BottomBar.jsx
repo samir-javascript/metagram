@@ -42,7 +42,7 @@ const BottomBar = () => {
         label: "Profile",
         },
     ];
-    if(pathname === "/sign-in" || pathname === "/register" || pathname.startsWith('/post') || message) return null
+    if(pathname === "/sign-in" || pathname === "/register" || pathname.startsWith("/reset_mypassword") ||  pathname.startsWith('/post') || message) return null
   return (
     <div className="bottom-bar">
         {bottombarLinks.map((link)=> {
