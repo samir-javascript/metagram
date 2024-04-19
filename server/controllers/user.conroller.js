@@ -104,21 +104,21 @@ const registerUser = asyncHandler ( async(req,res)=> {
    })
     const verifyToken = asyncHandler(async(req,res)=> {
          try {
-             const { token, user} = req.body;
-             if(!isValidObjectId(user))  {
+             const { token, user:userId} = req.body;
+             if(!isValidObjectId(userId))  {
                 res.status(401)
                 throw new Error('Invalid user ID')
              }
-           
+            const user = await User.findById(userId)
             const tk = await EmailVerificationToken.findOne({
-                user,
+                user: userId,
                 token
              })
              if(!tk) {
                 res.status(401)
                 throw new Error('Not authorized, no token')
              }
-             await User.findByIdAndUpdate(user, {
+             await User.findByIdAndUpdate(userId, {
                 verified: true
              })
              await EmailVerificationToken.findByIdAndDelete(tk._id)
