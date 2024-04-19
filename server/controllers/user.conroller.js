@@ -56,7 +56,7 @@ const registerUser = asyncHandler ( async(req,res)=> {
                  user: user._id,
                  token: crypto.randomBytes(32).toString("hex")
             })
-            const text =  `http://localhost:5173/resetPassword?user=${user._id}&token=${token.token}`
+            const text =  `${process.env.VITE_BASE_URL}/resetPassword?user=${user._id}&token=${token.token}`
            await  sendMail(email, "Email verification", text)
             res.status(200).json({
                 _id: user._id,
@@ -190,7 +190,7 @@ const registerUser = asyncHandler ( async(req,res)=> {
          if(!token) {
             throw new Error('Failed to create token')
          }
-         const text = `http://localhost:5173/reset-password_appgram?user=${user._id}&token=${token.token}`
+         const text = `${process.env.VITE_BASE_URL}/reset-password_appgram?user=${user._id}&token=${token.token}`
          await sendEmailForResetPassword(email,'Reset password',text)
          res.status(200).json({message: "Please check out your inbox to reset your password"})
      } catch (error) {
